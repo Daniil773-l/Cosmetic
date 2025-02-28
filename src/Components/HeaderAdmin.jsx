@@ -1,7 +1,20 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LogOut, LayoutDashboard, Package, Users } from "lucide-react";
+import { getAuth, signOut } from "firebase/auth";
 
-const AdminHeader = ({ onLogout }) => {
+const AdminHeader = () => {
+    const navigate = useNavigate();
+    const auth = getAuth();
+
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+            navigate("/"); // Перенаправляем на страницу входа после выхода
+        } catch (error) {
+            console.error("Ошибка выхода:", error.message);
+        }
+    };
+
     return (
         <header className="bg-[#1F1F1F] text-white shadow-lg py-4 px-6 flex items-center justify-between">
             {/* Логотип */}
@@ -25,7 +38,7 @@ const AdminHeader = ({ onLogout }) => {
 
             {/* Кнопка выхода */}
             <button
-                onClick={onLogout}
+                onClick={handleLogout}
                 className="flex items-center gap-2 bg-[#D7263D] px-4 py-2 rounded-lg text-white hover:bg-[#B51E2E] transition"
             >
                 <LogOut size={20} /> Выйти

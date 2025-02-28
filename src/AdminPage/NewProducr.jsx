@@ -135,10 +135,6 @@ const AddProduct = () => {
         }
     };
 
-
-    /**
-     * 📌 Добавление нового оттенка (цвета) в `variants`
-     */
     const handleAddVariant = () => {
         setNewProduct({
             ...newProduct,
@@ -156,10 +152,6 @@ const AddProduct = () => {
         });
     };
 
-
-    /**
-     * 📌 Обновление данных оттенка (цвета)
-     */
     const handleVariantChange = (index, key, value) => {
         setNewProduct(prevState => {
             const updatedVariants = [...prevState.variants];
@@ -168,10 +160,6 @@ const AddProduct = () => {
         });
     };
 
-
-    /**
-     * 📌 Загрузка фото/видео для оттенка
-     */
     const handleVariantMediaUpload = (event, index) => {
         const files = Array.from(event.target.files);
         const newMedia = [];
@@ -201,12 +189,6 @@ const AddProduct = () => {
         });
     };
 
-
-
-
-    /**
-     * 📌 Удаление медиа у оттенка
-     */
     const removeVariantMedia = (variantIndex, mediaIndex) => {
         setNewProduct(prevState => {
             const updatedVariants = [...prevState.variants];
@@ -216,45 +198,6 @@ const AddProduct = () => {
     };
 
 
-    /**
-     * 📌 Удаление оттенка из списка
-     */
-    const removeVariant = (index) => {
-        setNewProduct({
-            ...newProduct,
-            variants: newProduct.variants.filter((_, i) => i !== index),
-        });
-    };
-
-
-    const handleEditProduct = async () => {
-        if (!editingProduct) return;
-
-        try {
-            const productRef = doc(db, "Products", editingProduct.id);
-
-            await updateDoc(productRef, {
-                ...editingProduct,
-                price: Number(editingProduct.price) || 0,
-                stock: Number(editingProduct.stock) || 0,
-            });
-
-            setProducts(products.map(p => (p.id === editingProduct.id ? editingProduct : p)));
-            setEditingProduct(null);
-            toast.success("✅ Товар успешно обновлён!");
-        } catch (error) {
-            toast.error("Ошибка обновления: " + error.message);
-        }
-    };
-    const handleDeleteProduct = async (id) => {
-        try {
-            await deleteDoc(doc(db, "Products", id)); // Удаляем товар из Firestore
-            setProducts(products.filter((p) => p.id !== id)); // Удаляем товар из состояния
-            toast.success("✅ Товар успешно удалён!");
-        } catch (error) {
-            toast.error("❌ Ошибка удаления: " + error.message);
-        }
-    };
 
     return (
         <>
