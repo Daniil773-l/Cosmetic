@@ -6,7 +6,9 @@ import AdminProducts from "./AdminPage/AdminProducts";
 import NewProduct from "./AdminPage/NewProducr";
 import ProtectedRoute from "./config/ProtectedRoute";
 import { AuthProvider, useAuth } from "./config/AuthContext";
-import AdminHeader from "./Components/HeaderAdmin"; // Импортируем админский хэдер
+import AdminHeader from "./Components/HeaderAdmin";
+import NewPromotion from "./AdminPage/NewPromotion";
+import PromotionPage from "./Pages/PromotionPage";
 import { useLocation } from "react-router-dom";
 function AppContent() {
     const { user } = useAuth();
@@ -20,6 +22,7 @@ function AppContent() {
             <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/регистрация" element={<AuthPage />} />
+                <Route path="/акции" element={<PromotionPage/>} />
                 <Route
                     path="/admin"
                     element={
@@ -27,6 +30,14 @@ function AppContent() {
                             <AdminPage />
                         </ProtectedRoute>
                     }
+                />
+                <Route
+                    path="/newpromotion"
+                    element={
+                        <ProtectedRoute>
+                            <NewPromotion/>
+                        </ProtectedRoute>
+                        }
                 />
                 <Route
                     path="/adminproducts"

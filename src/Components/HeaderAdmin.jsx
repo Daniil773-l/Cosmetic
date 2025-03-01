@@ -28,8 +28,8 @@ const AdminHeader = () => {
                 <Link to="/newproducts" className="flex items-center gap-2 hover:text-[#D7263D] transition">
                     <Users size={20} /> Добавить новый товар
                 </Link>
-                <Link to="/admin/users" className="flex items-center gap-2 hover:text-[#D7263D] transition">
-                    <Users size={20} />Обновление новостей
+                <Link to="/newpromotion" className="flex items-center gap-2 hover:text-[#D7263D] transition">
+                    <Users size={20} />Добавление акций
                 </Link>
                 <Link to="/admin/settings" className="flex items-center gap-2 hover:text-[#D7263D] transition">
                     <LayoutDashboard size={20} /> Настройки
