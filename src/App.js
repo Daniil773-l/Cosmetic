@@ -4,6 +4,7 @@ import AuthPage from "./Pages/AuthReg/Auth"
 import AdminPage from "./AdminPage/admin"
 import AdminProducts from "./AdminPage/AdminProducts";
 import NewProducr from "./AdminPage/NewProducr";
+
 function App() {
     return (
         <Router>

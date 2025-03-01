@@ -1,70 +1,182 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { db } from "../config/FirebaseConfig";
+import { collection, getDocs } from "firebase/firestore";
 
-
-
-const products = [
-    { name: "Маска для увлажнения и питания волос", price: "1230.00 руб", image: "https://via.placeholder.com/400" },
-    { name: "Увлажняющая сыворотка для лица", price: "1180.00 руб", image: "https://via.placeholder.com/400" },
-    { name: "Матирующая пудра для лица", price: "800.00 руб", image: "https://via.placeholder.com/400" },
-    { name: "Кремовые жидкие румяна для лица", price: "1500.00 руб", image: "https://via.placeholder.com/400" },
-    { name: "Помада-бальзам для губ с витамином E", price: "1870.00 руб", oldPrice: "1900.00 руб", image: "https://via.placeholder.com/400", discount: "-2%" }
-];
+// Анимация появления при скролле
+const fadeInUp = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
 
 const BestsellersSlider = () => {
+    const [products, setProducts] = useState([]);
     const [index, setIndex] = useState(0);
     const visibleProducts = 4;
+    const [dragging, setDragging] = useState(false);
+    const controls = useAnimation();
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                // Проверяем `localStorage`
+                const storedProducts = localStorage.getItem("bestsellers");
+                if (storedProducts) {
+                    setProducts(JSON.parse(storedProducts));
+                    return;
+                }
+
+                // Если товаров нет, загружаем из Firestore
+                const querySnapshot = await getDocs(collection(db, "Products"));
+                const fetchedProducts = querySnapshot.docs.map((doc) => {
+                    const data = doc.data();
+
+                    let image = "https://via.placeholder.com/400";
+                    if (data.variants && data.variants.length > 0 && data.variants[0].media.length > 0) {
+                        image = data.variants[0].media[0].data;
+                    }
+
+                    let price = "0 ₸";
+                    let oldPrice = null;
+                    if (data.variants && data.variants.length > 0) {
+                        price = `${data.variants[0].price} ₸`;
+                        oldPrice = data.variants[0].oldPrice ? `${data.variants[0].oldPrice} ₸` : null;
+                    }
+
+                    return {
+                        id: doc.id,
+                        name: data.title,
+                        price: price,
+                        oldPrice: oldPrice,
+                        discount: data.discount || null,
+                        image: image,
+                    };
+                });
+
+                setProducts(fetchedProducts);
+                localStorage.setItem("bestsellers", JSON.stringify(fetchedProducts)); // Сохранение в `localStorage`
+            } catch (error) {
+                console.error("Ошибка загрузки товаров:", error.message);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            controls.start("visible");
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [controls]);
 
     const nextSlide = () => {
-        setIndex((prev) => (prev + 1) % products.length);
+        if (products.length <= visibleProducts) return;
+        setIndex((prev) => (prev + visibleProducts) % products.length);
     };
 
     const prevSlide = () => {
-        setIndex((prev) => (prev - 1 + products.length) % products.length);
+        if (products.length <= visibleProducts) return;
+        setIndex((prev) => (prev - visibleProducts + products.length) % products.length);
     };
 
     return (
-        <section className="container mx-auto py-16">
-            <h2 className="text-4xl font-bold text-center text-[#141414] mb-12">Бестселлеры</h2>
-            <div className="relative flex items-center">
-                <button onClick={prevSlide} className="absolute left-0 z-10 bg-[#141414] text-white p-3 rounded-full shadow-md hover:bg-[#D7263D] transition">
+        <motion.section
+            className="container mx-auto py-12"
+            initial="hidden"
+            animate={controls}
+            variants={fadeInUp}
+        >
+            <h2 className="text-4xl font-extrabold text-center text-[#D7263D] mb-8 tracking-wide">Бестселлеры</h2>
+
+            <div className="relative flex items-center justify-center">
+                {/* Кнопка Влево */}
+                <button
+                    onClick={prevSlide}
+                    className="absolute left-4 z-10 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-[#D7263D] transition-all duration-300 hover:scale-110"
+                    disabled={products.length <= visibleProducts}
+                >
                     <ChevronLeft size={24} />
                 </button>
 
-                <div className="overflow-hidden w-full px-10">
+                {/* Карточки товаров с анимацией свайпа */}
+                <motion.div
+                    className="overflow-hidden w-full px-6 cursor-grab active:cursor-grabbing"
+                    drag="x"
+                    dragConstraints={{ left: -300, right: 300 }}
+                    onDragStart={() => setDragging(true)}
+                    onDragEnd={(event, info) => {
+                        setDragging(false);
+                        if (info.offset.x < -100) {
+                            nextSlide();
+                        } else if (info.offset.x > 100) {
+                            prevSlide();
+                        }
+                    }}
+                >
                     <AnimatePresence mode="popLayout">
                         <motion.div
                             key={index}
-                            className="flex gap-8"
+                            className="flex gap-6 justify-center"
                             initial={{ opacity: 0, x: 50 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -50 }}
                             transition={{ duration: 0.6, ease: "easeInOut" }}
                         >
-                            {products.slice(index, index + visibleProducts).map((product, i) => (
-                                <div key={i} className="bg-[#F5F3F5] p-6 rounded-xl shadow-lg w-60 text-center">
-                                    <div className="relative">
-                                        {product.discount && (
-                                            <span className="absolute top-2 right-2 bg-[#D7263D] text-white text-xs px-2 py-1 rounded-full">{product.discount}</span>
-                                        )}
-                                        <img src={product.image} alt={product.name} className="w-full h-40 object-cover rounded-lg" />
-                                    </div>
-                                    <h3 className="text-lg font-semibold text-[#141414] mt-4">{product.name}</h3>
-                                    <div className="text-[#D7263D] font-bold text-xl mt-2">
-                                        {product.price} <span className="text-gray-400 line-through text-sm">{product.oldPrice}</span>
-                                    </div>
-                                </div>
-                            ))}
+                            {products.length > 0 ? (
+                                products
+                                    .slice(index, index + visibleProducts)
+                                    .concat(products.slice(0, Math.max(0, visibleProducts - (products.length - index)) ))
+                                    .map((product) => (
+                                        <motion.div
+                                            key={product.id}
+                                            className="relative bg-white p-5 rounded-xl shadow-lg w-[260px] text-center border border-gray-300 transition-all duration-300 hover:shadow-2xl hover:scale-105 group"
+                                        >
+                                            {/* Картинка товара */}
+                                            <div className="relative overflow-hidden rounded-lg">
+                                                {product.discount && (
+                                                    <span className="absolute top-2 right-2 bg-[#D7263D] text-white text-xs px-2 py-1 rounded-full shadow-md">
+                                                        {product.discount}
+                                                    </span>
+                                                )}
+                                                <img
+                                                    src={product.image}
+                                                    alt={product.name}
+                                                    className="w-full h-48 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110"
+                                                />
+                                            </div>
+
+                                            {/* Название товара */}
+                                            <h3 className="text-lg font-semibold text-gray-900 mt-4 truncate">{product.name}</h3>
+
+                                            {/* Цена */}
+                                            <div className="text-[#D7263D] font-bold text-xl mt-2">
+                                                {product.price}{" "}
+                                                {product.oldPrice && (
+                                                    <span className="text-gray-400 line-through text-sm ml-2">{product.oldPrice}</span>
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                    ))
+                            ) : (
+                                <p className="text-gray-500 text-center w-full">Загрузка товаров...</p>
+                            )}
                         </motion.div>
                     </AnimatePresence>
-                </div>
+                </motion.div>
 
-                <button onClick={nextSlide} className="absolute right-0 z-10 bg-[#141414] text-white p-3 rounded-full shadow-md hover:bg-[#D7263D] transition">
+                {/* Кнопка Вправо */}
+                <button
+                    onClick={nextSlide}
+                    className="absolute right-4 z-10 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-[#D7263D] transition-all duration-300 hover:scale-110"
+                    disabled={products.length <= visibleProducts}
+                >
                     <ChevronRight size={24} />
                 </button>
             </div>
-        </section>
+        </motion.section>
     );
 };
 

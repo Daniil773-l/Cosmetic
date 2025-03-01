@@ -7,7 +7,7 @@ import { ArrowRight } from "lucide-react";
 const categories = [
     { title: "Парфюм", image: Card1, link: "#" },
     { title: "Волосы", image: Card2, link: "#" },
-    { title: "Декоративная косметика", image: Card3, link: "#" },
+    { title: "Макияж", image: Card3, link: "#" },
     { title: "Уход", image: Card4, link: "#" }
 ];
 

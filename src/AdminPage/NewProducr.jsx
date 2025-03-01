@@ -1,20 +1,17 @@
 import { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { db } from "../config/FirebaseConfig";
-import { doc, getDoc, collection, getDocs, addDoc, deleteDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs, addDoc} from "firebase/firestore";
 import { toast } from "react-toastify";
-import { motion } from "framer-motion";
-import { Trash, Upload, Edit } from "lucide-react";
-import Carousel from "react-multi-carousel";
+
 import "react-multi-carousel/lib/styles.css";
-import Modal from "react-modal";
-import AdminHeader from "../Components/HeaderAdmin";
+
 const AddProduct = () => {
     const [isAdmin, setIsAdmin] = useState(false);
     const [products, setProducts] = useState([]);
-    const [activeTab, setActiveTab] = useState("products");
+
     const [loading, setLoading] = useState(true);
-    const [editingProduct, setEditingProduct] = useState(null);
+
     const [previewMedia, setPreviewMedia] = useState([]);
     const [newProduct, setNewProduct] = useState({
         title: "",
@@ -141,21 +138,31 @@ const AddProduct = () => {
             variants: [
                 ...newProduct.variants,
                 {
-                    colorName: "",  // 🔥 Название цвета (например, "Красный")
-                    colorHex: "#000000",  // 🔥 HEX-код цвета (по умолчанию черный)
-                    colorNumber: "",  // 🔥 Номер цвета (например, "270")
+                    colorName: "",
+                    colorHex: "#000000",
+                    colorNumber: "",
                     price: newProduct.price,
                     stock: newProduct.stock,
+                    isNew: false,  // ✅ Новый товар (отдельно для каждого оттенка)
+                    discount: "",  // ✅ Скидка (отдельно для каждого оттенка)
+                    finalPrice: newProduct.price,  // ✅ Итоговая цена с учётом скидки
                     media: [],
                 },
             ],
         });
     };
-
     const handleVariantChange = (index, key, value) => {
         setNewProduct(prevState => {
             const updatedVariants = [...prevState.variants];
             updatedVariants[index] = { ...updatedVariants[index], [key]: value };
+
+            // Автоматически пересчитываем цену с учётом скидки
+            if (key === "discount") {
+                const discount = Number(value) || 0;
+                const basePrice = Number(updatedVariants[index].price) || 0;
+                updatedVariants[index].finalPrice = (basePrice - (basePrice * discount) / 100).toFixed(2);
+            }
+
             return { ...prevState, variants: updatedVariants };
         });
     };
@@ -201,7 +208,7 @@ const AddProduct = () => {
 
     return (
         <>
-            <AdminHeader/>
+
             <div className="min-h-screen bg-[#1F1F1F] p-8 text-white">
                 <div className="mt-10 max-w-3xl mx-auto bg-gray-900 p-10 rounded-2xl shadow-xl border border-gray-700">
                     <h2 className="text-4xl font-extrabold text-white mb-8 text-center">Добавить товар</h2>
@@ -293,6 +300,7 @@ const AddProduct = () => {
                                     {[
                                         { label: "Цена", key: "price", type: "number" },
                                         { label: "Количество", key: "stock", type: "number" },
+                                        { label: "Скидка (%)", key: "discount", type: "number" }, // ✅ Добавлено поле скидки
                                     ].map(({ label, key, type }) => (
                                         <div key={key}>
                                             <label className="block text-gray-400 text-sm font-medium">{label}</label>
@@ -305,6 +313,18 @@ const AddProduct = () => {
                                             />
                                         </div>
                                     ))}
+
+                                    {/* ✅ Итоговая цена с учетом скидки */}
+                                    <div>
+                                        <label className="block text-gray-400 text-sm font-medium">Итоговая цена</label>
+                                        <input
+                                            type="text"
+                                            value={(variant.price - (variant.price * (variant.discount || 0) / 100)).toFixed(2)} // Авторасчет
+                                            disabled
+                                            className="w-full p-3 bg-gray-700 rounded-lg text-gray-400 border border-gray-600"
+                                        />
+                                    </div>
+
 
                                     {/* Загрузка фото / видео */}
                                     <div>
@@ -338,6 +358,16 @@ const AddProduct = () => {
                                                 </button>
                                             </div>
                                         ))}
+                                    </div>
+
+                                    <div className="flex items-center gap-3">
+                                        <input
+                                            type="checkbox"
+                                            checked={variant.isNew}
+                                            onChange={() => handleVariantChange(index, "isNew", !variant.isNew)}
+                                            className="w-5 h-5"
+                                        />
+                                        <label className="text-gray-300">Отметить как новый оттенок</label>
                                     </div>
                                 </div>
                             ))}
