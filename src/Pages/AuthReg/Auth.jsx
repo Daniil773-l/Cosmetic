@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { auth, db, googleProvider } from "../../config/FirebaseConfig";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup , setPersistence, browserSessionPersistence} from "firebase/auth";
 import { doc, setDoc,getDoc } from "firebase/firestore";
-
+import { useAuth } from "../../config/AuthContext";
 const AuthPage = () => {
     const [isLogin, setIsLogin] = useState(true);
     const [email, setEmail] = useState("");
@@ -18,6 +18,7 @@ const AuthPage = () => {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate(); // 🔄 Хук для перенаправления
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const { setUser } = useAuth();
     // 🚀 Регистрация через Email/Password
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -59,18 +60,25 @@ const AuthPage = () => {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            // 📌 Проверяем роль в Firestore
+            // 📌 Получаем данные пользователя из Firestore
             const userRef = doc(db, "users", user.uid);
             const userSnap = await getDoc(userRef);
+
             if (userSnap.exists()) {
                 const userData = userSnap.data();
+                setUser({
+                    uid: user.uid,
+                    email: user.email,
+                    role: userData.role, // 📌 Устанавливаем роль
+                });
+
                 toast.success("Вы успешно вошли!");
 
                 // 🎯 Перенаправляем по роли
                 if (userData.role === "admin") {
                     navigate("/admin"); // 👉 Перенос в админку
                 } else {
-                    navigate("/"); // 👉 Обычные пользователи остаются на главной
+                    navigate("/");
                 }
             } else {
                 toast.error("Пользователь не найден!");
@@ -79,6 +87,7 @@ const AuthPage = () => {
             toast.error("Ошибка входа: " + error.message);
         }
     };
+
 
     // 🔥 Авторизация через Google
     const handleGoogleLogin = async (e) => {

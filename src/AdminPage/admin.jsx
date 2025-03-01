@@ -5,7 +5,7 @@ const AdminPanel = () => {
 
     return (
         <>
-            <HeaderAdmin/>
+
             <NewProducr />
         </>
 

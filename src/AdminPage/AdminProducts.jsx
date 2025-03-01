@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import AdminHeader from "../Components/HeaderAdmin";
+
 const ProductsPage = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -67,7 +67,6 @@ const ProductsPage = () => {
         : [];
     return (
         <>
-        <AdminHeader/>
         <div className="p-6 bg-[#141414] min-h-screen text-white">
             <h1 className="text-3xl font-bold text-[#D7263D] mb-6 text-center">Все товары</h1>
 

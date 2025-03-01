@@ -1,21 +1,60 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./HomePage";
-import AuthPage from "./Pages/AuthReg/Auth"
-import AdminPage from "./AdminPage/admin"
+import AuthPage from "./Pages/AuthReg/Auth";
+import AdminPage from "./AdminPage/admin";
 import AdminProducts from "./AdminPage/AdminProducts";
-import NewProducr from "./AdminPage/NewProducr";
+import NewProduct from "./AdminPage/NewProducr";
+import ProtectedRoute from "./config/ProtectedRoute";
+import { AuthProvider, useAuth } from "./config/AuthContext";
+import AdminHeader from "./Components/HeaderAdmin"; // Импортируем админский хэдер
+import { useLocation } from "react-router-dom";
+function AppContent() {
+    const { user } = useAuth();
+    const location = useLocation(); // 👈 Получаем текущий путь
 
-function App() {
+    // ❌ Скрываем админ-хэдер на странице авторизации
+    const hideAdminHeader = location.pathname === "/регистрация";
     return (
-        <Router>
+        <>
+            {!hideAdminHeader && user?.role === "admin" && <AdminHeader />}
             <Routes>
                 <Route path="/" element={<HomePage />} />
-                <Route path="/регистрация" element={<AuthPage />}/>
-                <Route path="/admin" element={<AdminPage/>}/>
-                <Route path="/adminproducts" element={<AdminProducts />}/>
-                <Route path="/newproducts" element={<NewProducr />}/>
+                <Route path="/регистрация" element={<AuthPage />} />
+                <Route
+                    path="/admin"
+                    element={
+                        <ProtectedRoute>
+                            <AdminPage />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/adminproducts"
+                    element={
+                        <ProtectedRoute>
+                            <AdminProducts />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/newproducts"
+                    element={
+                        <ProtectedRoute>
+                            <NewProduct />
+                        </ProtectedRoute>
+                    }
+                />
             </Routes>
-        </Router>
+        </>
+    );
+}
+function App() {
+    return (
+        <AuthProvider>
+            <Router>
+                <AppContent />
+            </Router>
+        </AuthProvider>
     );
 }
 
