@@ -2,15 +2,15 @@ import { Mail, Instagram, Facebook, Twitter, Phone } from "lucide-react";
 
 const Footer = () => {
     return (
-        <footer className="bg-[#141414] text-white py-12 mt-16">
+        <footer className="bg-[#1E2A38] text-white py-12 mt-16">
             <div className="container mx-auto px-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {/* ЛОГОТИП и КОРОТКО О БРЕНДЕ */}
+                    {/* ЛОГОТИП и О БРЕНДЕ */}
                     <div>
-                        <h2 className="text-3xl font-extrabold text-[#D7263D]">MOON</h2>
+                        <h2 className="text-3xl font-extrabold text-[#C51F5D]">MOON</h2>
                         <p className="text-gray-400 mt-3 text-sm">
                             Натуральная косметика для заботы о вашей коже.
-                            Мы используем только лучшие ингредиенты для здоровья и красоты.
+                            Только лучшие ингредиенты для здоровья и красоты.
                         </p>
                     </div>
 
@@ -37,13 +37,13 @@ const Footer = () => {
 
                         {/* СОЦСЕТИ */}
                         <div className="flex gap-4 mt-4">
-                            <a href="#" className="text-gray-400 hover:text-[#D7263D] transition">
+                            <a href="#" className="text-gray-400 hover:text-[#C51F5D] transition">
                                 <Instagram size={20} />
                             </a>
-                            <a href="#" className="text-gray-400 hover:text-[#D7263D] transition">
+                            <a href="#" className="text-gray-400 hover:text-[#C51F5D] transition">
                                 <Facebook size={20} />
                             </a>
-                            <a href="#" className="text-gray-400 hover:text-[#D7263D] transition">
+                            <a href="#" className="text-gray-400 hover:text-[#C51F5D] transition">
                                 <Twitter size={20} />
                             </a>
                         </div>
@@ -61,7 +61,7 @@ const Footer = () => {
                         />
                         <button
                             type="submit"
-                            className="bg-[#D7263D] text-white px-6 py-2 rounded-r-md hover:bg-red-700 transition"
+                            className="bg-[#C51F5D] text-white px-6 py-2 rounded-r-md hover:bg-[#A81B4B] transition"
                         >
                             Подписаться
                         </button>

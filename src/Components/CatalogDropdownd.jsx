@@ -149,21 +149,21 @@ const CatalogDropdown = () => {
     return (
         <>
             <button
-                className="md:hidden text-white hover:text-[#D7263D] transition duration-300"
+                className="md:hidden text-[#E2E2D2] hover:text-[#C51F5D] transition duration-300"
                 onClick={() => setMobileMenuOpen(true)}
             >
                 <Menu size={28} />
             </button>
 
             <div className="relative hidden md:block" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-                <div className="text-[#ABACAD] hover:text-[#D7263D] transition duration-300">
+                <div className="cursor-pointer text-[#E2E2D2] hover:text-[#C51F5D] transition duration-300 transform hover:scale-105">
                     каталог
                 </div>
 
                 <AnimatePresence>
                     {showMenu && (
                         <motion.div
-                            className="absolute left-0 top-12 bg-[#1C1C1E] text-white w-[650px] shadow-xl rounded-xl p-5"
+                            className="absolute left-0 top-12 bg-[#243447] text-[#E2E2D2] w-[650px] shadow-xl rounded-xl p-5"
                             initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
@@ -175,7 +175,7 @@ const CatalogDropdown = () => {
                                     {categories.map((category, index) => (
                                         <div
                                             key={index}
-                                            className="flex items-center justify-between cursor-pointer hover:text-[#D7263D] transition px-3 py-2 rounded-lg hover:bg-[#2A2A2D]"
+                                            className="flex items-center justify-between cursor-pointer hover:text-[#C51F5D] transition px-3 py-2 rounded-lg hover:bg-[#141D26]"
                                             onMouseEnter={() => setHoveredCategory(category)}
                                         >
                                             <span className="font-semibold">{category.name}</span>

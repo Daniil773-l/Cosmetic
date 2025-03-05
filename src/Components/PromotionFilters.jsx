@@ -43,9 +43,9 @@ const PromotionFilters = ({ promotions = [], setFilteredPromotions }) => {
     };
 
     return (
-        <section className="bg-[#141414] text-white pt-24 pb-12 px-6 flex flex-col items-center">
+        <section className="bg-[#141D26] text-[#E2E2D2] pt-24 pb-12 px-6 flex flex-col items-center">
             {/* Динамическое количество акций с FLIP-анимацией */}
-            <h2 className="text-5xl font-extrabold text-white tracking-wide flex items-center">
+            <h2 className="text-5xl font-extrabold tracking-wide flex items-center">
                 акции/
                 <div className="relative w-[40px] h-[50px] ml-2 overflow-hidden">
                     <AnimatePresence>
@@ -68,7 +68,7 @@ const PromotionFilters = ({ promotions = [], setFilteredPromotions }) => {
                             animate={{ rotateX: 0, opacity: 1 }}
                             exit={{ rotateX: -90, opacity: 0 }}
                             transition={{ duration: 0.3, ease: "easeInOut" }}
-                            className="absolute top-0 left-0 w-full h-full flex justify-center items-center text-gray-400 font-semibold"
+                            className="absolute top-0 left-0 w-full h-full flex justify-center items-center text-[#E2E2D2] font-semibold"
                         >
                             {displayCount}
                         </motion.span>
@@ -87,8 +87,8 @@ const PromotionFilters = ({ promotions = [], setFilteredPromotions }) => {
                     }}
                     className={`px-6 py-2 rounded-full border text-lg font-medium transition-all tracking-wide ${
                         activeFilters.length === 0
-                            ? "bg-[#D7263D] border-[#D7263D] text-white shadow-md scale-105"
-                            : "border-gray-600 text-gray-300 hover:bg-gray-800 hover:border-gray-400 hover:text-white"
+                            ? "bg-[#C51F5D] border-[#C51F5D] text-white shadow-md scale-105"
+                            : "border-gray-600 text-gray-300 hover:bg-[#243447] hover:border-gray-400 hover:text-white"
                     }`}
                 >
                     все акции
@@ -98,11 +98,10 @@ const PromotionFilters = ({ promotions = [], setFilteredPromotions }) => {
                     <button
                         key={filter.value}
                         onClick={() => handleFilterClick(filter.value)}
-                        className={`px-6 py-2 rounded-full border text-lg font-medium transition-all tracking-wide
-                        ${
+                        className={`px-6 py-2 rounded-full border text-lg font-medium transition-all tracking-wide ${
                             activeFilters.includes(filter.value)
-                                ? "bg-[#D7263D] border-[#D7263D] text-white shadow-md scale-105"
-                                : "border-gray-600 text-gray-300 hover:bg-gray-800 hover:border-gray-400 hover:text-white"
+                                ? "bg-[#C51F5D] border-[#C51F5D] text-white shadow-md scale-105"
+                                : "border-gray-600 text-gray-300 hover:bg-[#243447] hover:border-gray-400 hover:text-white"
                         }`}
                     >
                         {filter.label}
@@ -114,3 +113,4 @@ const PromotionFilters = ({ promotions = [], setFilteredPromotions }) => {
 };
 
 export default PromotionFilters;
+

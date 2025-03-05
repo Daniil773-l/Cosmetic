@@ -9,6 +9,9 @@ import { AuthProvider, useAuth } from "./config/AuthContext";
 import AdminHeader from "./Components/HeaderAdmin";
 import NewPromotion from "./AdminPage/NewPromotion";
 import PromotionPage from "./Pages/PromotionPage";
+import UserHomePage from "./Pages/UserHomePage";
+
+
 import { useLocation } from "react-router-dom";
 function AppContent() {
     const { user } = useAuth();
@@ -23,6 +26,7 @@ function AppContent() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/регистрация" element={<AuthPage />} />
                 <Route path="/акции" element={<PromotionPage/>} />
+                <Route path="/домашняя-страница" element={<UserHomePage/>}/>
                 <Route
                     path="/admin"
                     element={
